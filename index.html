@@ -1,17 +1,18 @@
 <head>
     <script type="module">
-        import {final} from "./final.js";
+        import {Breakout} from "./breakout.js";
         let game;
         function init() {
             const canvas = document.getElementById('dvd');
-            game = new final(canvas, keyMap);
+            game = new Breakout(canvas, keyMap);
             
-             setInterval(update, 0);
+            setInterval(update, 0);
         }
         
         function update() {
             game.mainLoop();
         }
+        
         window.onload = init;
         
         const keyMap = {};
@@ -30,9 +31,7 @@
 </head>
 
 <body>
-    <p id="fps"> fps </p>
-    <canvas style="border: 1px solid black" id="dvd"> </canvas>
-    <p> Completed Extra Task 1: Add bouncing sounds</p>
-    <p> Completed Extra Task 2: Implement winning and losing.</p>
-   <p> Completed Extra Task 3: Add a welcome screen with instructions and a pause screen</p> 
+    <p id="tasks">I did extra tasks 2 (winning and losing) and 3 (start/pause screen) </p>
+    <p id="fps"></p>
+    <canvas style="border: 1px solid black" id="dvd"></canvas>
 </body>
