@@ -25,10 +25,10 @@ export class Breakout {
 
         // Set up the player paddle (paddle on the left side)
         this.paddle = new Box();
-        this.paddle.minX = 150;
-        this.paddle.minY = 430;
-        this.paddle.width = 100;
-        this.paddle.height = 10;
+        this.paddle.minX = 250;
+        this.paddle.minY = 432;
+        this.paddle.width = 105;
+        this.paddle.height = 20;
         this.paddle.color = [255, 255, 255]; 
         this.paddle.isPaddle = true;
         
@@ -64,6 +64,36 @@ export class Breakout {
         this.gameStarted = false;
         this.playerWin;
         this.lives = 3
+        
+        
+        this.eyeLeft = new Circle();
+        this.eyeLeft.x = 290;
+        this.eyeLeft.y = 441;
+        this.eyeLeft.radius = 8;
+        
+        this.eyeLeftInner = new Circle();
+        this.eyeLeftInner.x = 290;
+        this.eyeLeftInner.y = 441;
+        this.eyeLeftInner.radius = 4;
+        this.eyeLeftInner.xVel = .07
+        this.eyeLeftInner.yVel = .07
+
+        
+        
+        this.eyeRight = new Circle();
+        this.eyeRight.x = 315;
+        this.eyeRight.y = 441;
+        this.eyeRight.radius = 8;
+        
+        
+        this.eyeRightInner = new Circle();
+        this.eyeRightInner.x = 315;
+        this.eyeRightInner.y = 441;
+        this.eyeRightInner.radius = 4;
+        this.eyeRightInner.xVel = this.box.xVel/16
+        this.eyeRightInner.yVel = this.box.yVel/16
+        
+     
 
        
                 
@@ -122,14 +152,31 @@ export class Breakout {
         
         if (this.keyMap['ArrowLeft']) {
             this.paddle.minX -= 6.5;
+            this.eyeLeft.x -= 6.5;
+            this.eyeRight.x -= 6.5;
+            this.eyeLeftInner.x -= 6.5;
+            this.eyeRightInner.x -= 6.5;
             if (this.paddle.minX < 0) {
                 this.paddle.minX = 0;
+                this.eyeLeft.x = 40;
+                this.eyeLeftInner.x = 40;
+                this.eyeRight.x = 65;
+                this.eyeRightInner.x = 65;
             }
+            
         }
         if (this.keyMap['ArrowRight']) {
             this.paddle.minX += 6.5;
+            this.eyeLeft.x += 6.5;
+            this.eyeRight.x += 6.5;
+            this.eyeLeftInner.x += 6.5;
+            this.eyeRightInner.x += 6.5;
             if (this.paddle.minX + this.paddle.width > this.canvas.width) {
                 this.paddle.minX = this.canvas.width - this.paddle.width;
+                this.eyeLeft.x = 576;
+                this.eyeLeftInner.x = 576;
+                this.eyeRight.x = 601;
+                this.eyeRightInner.x = 601;
             }
         }
         
@@ -198,7 +245,7 @@ export class Breakout {
         
         
         
-        this.box.update(obstacles);
+        this.box.update(obstacles, this.eyeLeft, this.eyeRight, this.eyeLeftInner, this.eyeRightInner);
         
         
      
@@ -264,6 +311,10 @@ export class Breakout {
         // Draw the box
         this.box.draw(this.ctx);
         this.paddle.draw(this.ctx);
+        this.eyeRightInner.draw(this.ctx)
+        this.eyeLeftInner.draw(this.ctx)
+        this.eyeRight.draw(this.ctx)
+        this.eyeLeft.draw(this.ctx)
        
         
         for (const brick of this.brickArray){
@@ -315,12 +366,17 @@ class Box {
         return intervalsOverlap(yi1, yi2);
     }
 
-    update(obstacles) {
+    update(obstacles, eyeLeft, eyeRight, eyeLeftInner, eyeRightInner) {
+        //in all circumstances check if the inner eye is on the outside of the outter eye... if (eyeLeftInner.x < eyeLeftInner) ... undo last step
+        
         // move x and y
 
         // move x
         this.minX += this.xVel;
+        eyeLeftInner.x += eyeLeftInner.xVel;
+        eyeRightInner.x += eyeRightInner.xVel;
 
+        console.log(eyeLeftInner)
         for (const o of obstacles) {
             
             if (o.active){
@@ -328,9 +384,15 @@ class Box {
             if (this.intersects(o)) {
                 // undo the step that caused the collision
                 this.minX -= this.xVel;
+                eyeLeftInner.x -= eyeLeftInner.xVel;
+                eyeRightInner.x -= eyeRightInner.xVel;
                 
                 // reverse xVel to bounce
                 this.xVel *= -1;
+                eyeLeftInner.xVel *= -1;
+                eyeRightInner.xVel *= -1;
+
+                
                 
                  if (o.isBrick){
                     o.active = false
@@ -344,7 +406,6 @@ class Box {
                     const paddle_mid = o.minX +(o.width/2)
                     const ball_pos = this.minX
                     const distance_from_center = Math.abs(paddle_mid - ball_pos)/20
-                    console.log(distance_from_center)
 
 
                     //ball hits right 
@@ -359,7 +420,9 @@ class Box {
                         let scaleFactor = 1 + (distance_from_center/50) 
                         
                         
-                        this.xVel = 5*distance_from_center 
+                        this.xVel = 5*distance_from_center
+                        eyeLeftInner.xVel = 5*distance_from_center/200
+                        eyeRightInner.xVel = 5*distance_from_center/200
                      
                     }
                     
@@ -375,6 +438,8 @@ class Box {
                          let scaleFactor = 1 + (distance_from_center/50)
                         
                         this.xVel = -5*distance_from_center 
+                        eyeLeftInner.xVel = -5*distance_from_center/200
+                        eyeRightInner.xVel = -5*distance_from_center/200
                   
                         
                     }            
@@ -387,15 +452,23 @@ class Box {
             
         // move y
         this.minY += this.yVel;
+        eyeLeftInner.y += eyeLeftInner.yVel;
+        eyeRightInner.y += eyeRightInner.yVel;
+        
 
         for (const o of obstacles) {
              if (o.active){
             if (this.intersects(o)) {
                 // undo the step that caused the collision
                 this.minY -= this.yVel;
+                eyeLeftInner.y -= eyeLeftInner.yVel
+                eyeRightInner.y -= eyeRightInner.yVel
+                
                 
                 // reverse yVel to bounce
                 this.yVel *= -1;
+                eyeLeftInner.yVel *= -1
+                eyeRightInner.yVel *= -1;
                 
                 
                    if (o.isBrick){
@@ -426,6 +499,8 @@ class Box {
                         
                         
                         this.xVel = 5*distance_from_center 
+                        eyeLeftInner.xVel = 5*distance_from_center/200
+                        eyeRightInner.xVel = 5*distance_from_center/200
                     
                     }
                     
@@ -438,6 +513,9 @@ class Box {
                         let scaleFactor = 1 + (distance_from_center/50)
                         
                         this.xVel = -5*distance_from_center
+                        
+                        eyeLeftInner.xVel = -5*distance_from_center/200
+                        eyeRightInner.xVel = -5*distance_from_center/200
                       
                         
                     }            
@@ -467,3 +545,25 @@ function intervalsOverlap(int1, int2) {
     }
     return (b > c);
 }
+
+
+class Circle {
+    constructor() {
+        this.x = 100;
+        this.y = 170;
+        this.radius = 20;
+        this.sAngle = 0;
+        this.eAngle = 2* Math.PI;
+        this.xVel = 0;
+        this.yVel = 0;
+
+    }
+    draw(ctx) {
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle);
+        ctx.strokeStyle = "blue";
+        ctx.stroke();
+            
+    }
+}
+
