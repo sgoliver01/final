@@ -75,8 +75,8 @@ export class Breakout {
         this.eyeLeftInner.x = 290;
         this.eyeLeftInner.y = 441;
         this.eyeLeftInner.radius = 4;
-        this.eyeLeftInner.xVel = .07
-        this.eyeLeftInner.yVel = .07
+        this.eyeLeftInner.xVel = this.box.xVel/16
+        this.eyeLeftInner.yVel = this.box.yVel/20
 
         
         
@@ -91,7 +91,7 @@ export class Breakout {
         this.eyeRightInner.y = 441;
         this.eyeRightInner.radius = 4;
         this.eyeRightInner.xVel = this.box.xVel/16
-        this.eyeRightInner.yVel = this.box.yVel/16
+        this.eyeRightInner.yVel = this.box.yVel/20
         
      
 
@@ -128,6 +128,21 @@ export class Breakout {
         this.box.width = 20;
         this.box.height = 20;
          
+         
+         //reset right eye
+        this.eyeRightInner.x = 315;
+        this.eyeRightInner.y = 441;
+        this.eyeRightInner.radius = 4;
+        this.eyeRightInner.xVel = this.box.xVel/16
+        this.eyeRightInner.yVel = this.box.yVel/20
+         
+         
+         //reset left eye
+        this.eyeLeftInner.x = 290;
+        this.eyeLeftInner.y = 441;
+        this.eyeLeftInner.radius = 4;
+        this.eyeLeftInner.xVel = this.box.xVel/16
+        this.eyeLeftInner.yVel = this.box.yVel/20
     }
     
     update() {
@@ -367,7 +382,7 @@ class Box {
     }
 
     update(obstacles, eyeLeft, eyeRight, eyeLeftInner, eyeRightInner) {
-        //in all circumstances check if the inner eye is on the outside of the outter eye... if (eyeLeftInner.x < eyeLeftInner) ... undo last step
+        //in all circumstances check if the inner eye is on the outside of the outter eye... if (eyeLeftInner.x < eyeLeft) ... undo last step
         
         // move x and y
 
@@ -375,8 +390,32 @@ class Box {
         this.minX += this.xVel;
         eyeLeftInner.x += eyeLeftInner.xVel;
         eyeRightInner.x += eyeRightInner.xVel;
+        console.log(eyeLeftInner.xVel, eyeRightInner.xVel)
+        console.log(eyeLeftInner.yVel, eyeRightInner.yVel)
+        
+        
+        //bound eye on the left side
+        
+        if (eyeLeftInner.x < eyeLeft.x - 2) {
+            eyeLeftInner.x = eyeLeft.x -2
+        }
+        
+        if (eyeRightInner.x < eyeRight.x -2 ) {
+            eyeRightInner.x = eyeRight.x -2
+        }
+        
+        //bound eye on the right
+        
+         if (eyeLeftInner.x > eyeLeft.x + 2) {
+            eyeLeftInner.x = eyeLeft.x + 2
+        }
+        
+        if (eyeRightInner.x > eyeRight.x + 2) {
+            eyeRightInner.x = eyeRight.x + 2
+        }
+        
+        
 
-        console.log(eyeLeftInner)
         for (const o of obstacles) {
             
             if (o.active){
@@ -421,9 +460,9 @@ class Box {
                         
                         
                         this.xVel = 5*distance_from_center
-                        eyeLeftInner.xVel = 5*distance_from_center/200
-                        eyeRightInner.xVel = 5*distance_from_center/200
-                     
+//                        eyeLeftInner.xVel = 5*distance_from_center/200
+//                        eyeRightInner.xVel = 5*distance_from_center/200
+//                     
                     }
                     
                     //ball hits left  
@@ -438,8 +477,8 @@ class Box {
                          let scaleFactor = 1 + (distance_from_center/50)
                         
                         this.xVel = -5*distance_from_center 
-                        eyeLeftInner.xVel = -5*distance_from_center/200
-                        eyeRightInner.xVel = -5*distance_from_center/200
+//                        eyeLeftInner.xVel = -5*distance_from_center/200
+//                        eyeRightInner.xVel = -5*distance_from_center/200
                   
                         
                     }            
@@ -455,15 +494,34 @@ class Box {
         eyeLeftInner.y += eyeLeftInner.yVel;
         eyeRightInner.y += eyeRightInner.yVel;
         
+        if (eyeLeftInner.y > eyeLeft.y + 2) {
+            eyeLeftInner.y = eyeLeft.y + 2
+        }
+        
+        if (eyeRightInner.y > eyeRight.y + 2) {
+            eyeRightInner.y = eyeRight.y + 2
+        }
+        
+        
+                
+        if (eyeLeftInner.y < eyeLeft.y - 2) {
+
+            eyeLeftInner.y = eyeLeft.y - 2
+        }
+        
+        if (eyeRightInner.y < eyeRight.y -2) {
+            eyeRightInner.y = eyeRight.y - 2
+        }
+        
 
         for (const o of obstacles) {
              if (o.active){
             if (this.intersects(o)) {
                 // undo the step that caused the collision
                 this.minY -= this.yVel;
-                eyeLeftInner.y -= eyeLeftInner.yVel
-                eyeRightInner.y -= eyeRightInner.yVel
-                
+//                eyeLeftInner.y -= eyeLeftInner.yVel
+//                eyeRightInner.y -= eyeRightInner.yVel
+//                
                 
                 // reverse yVel to bounce
                 this.yVel *= -1;
