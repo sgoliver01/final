@@ -11,6 +11,9 @@ export class Breakout {
         
         // save canvas context as member
         this.ctx = canvas.getContext('2d'); 
+        
+        
+        this.ballsArray = []
 
         // Set up the box (bouncing around the screen)
         this.box = new Box();
@@ -21,6 +24,8 @@ export class Breakout {
     
         this.box.width = 20;
         this.box.height = 20;
+        
+        this.ballsArray.push(this.box)
         
 
         // Set up the player paddle (paddle on the left side)
@@ -37,19 +42,28 @@ export class Breakout {
         
         
         for (let r = 0; r<4; r++){
+            console.log("BREAK")
         for (let c = 0; c < 10; c++) {
             const newBrick = new Box()
             newBrick.minX = (c+1)*8 + (c*55)
             newBrick.minY = 30+ (40*r)
             newBrick.width = 55
             newBrick.height = 15
-            newBrick.randomizeColor()
+//            newBrick.randomizeColor()
+            newBrick.color = [56,251,157]
+            
             newBrick.xVel= 0
             newBrick.yVel= 0
             newBrick.isBrick = true
             this.brickArray.push(newBrick)
+            console.log(newBrick.color)
         }
     }
+        
+        var randomIndex = Math.floor(Math.random() * this.brickArray.length);
+        this.brickArray[randomIndex].color = [232, 247, 26]
+        this.brickArray[randomIndex].isPowerup = true
+        
 
 //        this.obstacles= this.obstacles.concat(this.brickArray)
        
@@ -93,10 +107,7 @@ export class Breakout {
         this.eyeRightInner.xVel = this.box.xVel/16
         this.eyeRightInner.yVel = this.box.yVel/20
         
-     
-
-       
-                
+              
     }
     
     
@@ -119,6 +130,7 @@ export class Breakout {
         this.draw();
         
     }
+    
      resetBall(){ 
         this.box.minX = 100
         this.box.minY = 300
@@ -148,7 +160,7 @@ export class Breakout {
     update() {
         // Update the obstacle using keyboard info
         
-           // Check for winning
+           // Check for losing
         if (this.box.minY + this.box.height > this.canvas.height) {
             
            
@@ -159,6 +171,7 @@ export class Breakout {
             this.gameOver = true;
             return
             } 
+            
             this.resetBall()
 
         }
@@ -357,6 +370,7 @@ class Box {
         this.active = true
         this.breakable = false
         this.isPaddle = false
+        this.isPowerup = false
         
     }
 
@@ -390,8 +404,8 @@ class Box {
         this.minX += this.xVel;
         eyeLeftInner.x += eyeLeftInner.xVel;
         eyeRightInner.x += eyeRightInner.xVel;
-        console.log(eyeLeftInner.xVel, eyeRightInner.xVel)
-        console.log(eyeLeftInner.yVel, eyeRightInner.yVel)
+//        console.log(eyeLeftInner.xVel, eyeRightInner.xVel)
+//        console.log(eyeLeftInner.yVel, eyeRightInner.yVel)
         
         
         //bound eye on the left side
@@ -449,16 +463,10 @@ class Box {
 
                     //ball hits right 
                     if (ball_pos > paddle_mid){
-                       
-//                        let dist =  o.minX+o.width-this.minX
-//                        
-//                        let scaleFactor = (1+ (Math.abs((dist-(o.width/2)) / (o.width/2)) /50))
-//                   
-//                        this.XVel *= scaleFactor 
+                     
+//                      let scaleFactor = (1+ (Math.abs((dist-(o.width/2)) / (o.width/2)) /50)) 
                           
-                        let scaleFactor = 1 + (distance_from_center/50) 
-                        
-                        
+                        let scaleFactor = 1 + (distance_from_center/50)                     
                         this.xVel = 5*distance_from_center
 //                        eyeLeftInner.xVel = 5*distance_from_center/200
 //                        eyeRightInner.xVel = 5*distance_from_center/200
@@ -467,15 +475,10 @@ class Box {
                     
                     //ball hits left  
                     else {
-                        
-                       
-//                        let dist = this.minX - o.minX
-//                        let scaleFactor = (1+(Math.abs((dist-  (o.width/2) / (o.width/2)) /50)))
-//                     
-//                        this.XVel *= scaleFactor 
-                        
-                         let scaleFactor = 1 + (distance_from_center/50)
-                        
+                    
+//                       let scaleFactor = (1+(Math.abs((dist-  (o.width/2) / (o.width/2)) /50)))
+             
+                        let scaleFactor = 1 + (distance_from_center/50)        
                         this.xVel = -5*distance_from_center 
 //                        eyeLeftInner.xVel = -5*distance_from_center/200
 //                        eyeRightInner.xVel = -5*distance_from_center/200
@@ -616,6 +619,7 @@ class Circle {
         this.yVel = 0;
 
     }
+    
     draw(ctx) {
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle);
@@ -624,4 +628,3 @@ class Circle {
             
     }
 }
-
