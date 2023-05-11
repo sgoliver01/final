@@ -657,7 +657,8 @@ class Circle {
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle);
         ctx.strokeStyle = "blue";
-       // ctx.stroke();
+        ctx.strokeStyle = 1;
+        ctx.stroke();
             
     }
 }
