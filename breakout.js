@@ -21,7 +21,7 @@ export class Breakout {
 
         // Set up the box (bouncing around the screen)
         this.box = new Box();
-        this.box.minX = 100
+        this.box.minX = 290
         this.box.minY = 300
         this.box.xVel = 3; // units: pixels per frame
         this.box.yVel = 3;
@@ -142,7 +142,7 @@ export class Breakout {
     }
     
      resetBall(){ 
-        this.box.minX = 100
+        this.box.minX = 290
         this.box.minY = 300
         this.box.xVel = 3; // units: pixels per frame
         this.box.yVel = 3;
@@ -165,6 +165,10 @@ export class Breakout {
         this.eyeLeftInner.radius = 4;
         this.eyeLeftInner.xVel = this.box.xVel/16
         this.eyeLeftInner.yVel = this.box.yVel/20
+         
+         
+         this.Xs = []
+         this.Ys = []
     }
     
     update() {
@@ -344,8 +348,17 @@ export class Breakout {
             this.ctx.fillStyle = 'rgb(255,255,255)';
             this.ctx.fillText("You Lose!", this.canvas.width/2, this.canvas.height/2)            
         }
+        //loop through the xs and ys
         
-        this.trail = new Trail(this.Xs.slice(-20)[0], this.Xs.slice(-1)[0], this.Ys.slice(-20)[0], this.Ys.slice(-1)[0])
+        for (var i = 0; i < this.Xs.length; i ++) {
+            this.trail = new Trail(this.Xs.slice(i)[0], this.Xs.slice(i+1)[0], this.Ys.slice(i)[0], this.Ys.slice(i+1)[0])
+            
+            this.trail.stroke = 'rgba(' + [255, 0, 0, i / 100] + ')';
+        
+            this.trail.draw(this.ctx)
+            
+        }
+            
         
         if (this.gameStarted){
         // Draw the box
@@ -355,7 +368,6 @@ export class Breakout {
         this.eyeLeftInner.draw(this.ctx)
         this.eyeRight.draw(this.ctx)
         this.eyeLeft.draw(this.ctx)
-        this.trail.draw(this.ctx)
 
        
         
@@ -510,12 +522,12 @@ class Box {
         eyeLeftInner.y += eyeLeftInner.yVel;
         eyeRightInner.y += eyeRightInner.yVel;
         
-        if (eyeLeftInner.y > eyeLeft.y + 2) {
-            eyeLeftInner.y = eyeLeft.y + 2
+        if (eyeLeftInner.y > eyeLeft.y) {
+            eyeLeftInner.y = eyeLeft.y
         }
         
-        if (eyeRightInner.y > eyeRight.y + 2) {
-            eyeRightInner.y = eyeRight.y + 2
+        if (eyeRightInner.y > eyeRight.y) {
+            eyeRightInner.y = eyeRight.y
         }
         
         
@@ -600,20 +612,20 @@ class Box {
           }
         }
 
-        if (Xs.length < 300) {
-            Xs.push(this.minX)
+        if (Xs.length < 50) {
+            Xs.push(this.minX + this.width/2)
         }
         else {
             Xs.shift()
-            Xs.push(this.minX)
+            Xs.push(this.minX + this.width/2)
         }
         
-        if (Ys.length < 300) {
-            Ys.push(this.minY)
+        if (Ys.length < 50) {
+            Ys.push(this.minY + this.height/2)
         }
         else {
             Ys.shift()
-            Ys.push(this.minY)
+            Ys.push(this.minY + this.height/2)
         }
 
         
@@ -658,6 +670,7 @@ class Circle {
         ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle);
         ctx.strokeStyle = "blue";
         ctx.strokeStyle = 1;
+        ctx.lineWidth = 2;
         ctx.stroke();
             
     }
@@ -671,10 +684,10 @@ class Circle {
         this.y1 = y1
         this.x2 = x2
         this.y2 = y2
-        this.stroke = "white"
+        this.stroke = "red"
+        this.opacity = .5
         this.width = 3
-         
-         
+          
          
      }
      draw(ctx) {
@@ -688,9 +701,8 @@ class Circle {
          ctx.beginPath()
 
         // place the cursor from the point the line should be started 
-         
+        ctx.moveTo(this.x2 , this.y2);
 
-        ctx.moveTo(this.x2 +5 , this.y2+5);
 
         // draw a line from current cursor position to the provided x,y coordinate
         ctx.lineTo(this.x1, this.y1);
@@ -698,6 +710,8 @@ class Circle {
 
         // set strokecolor
         ctx.strokeStyle = this.stroke;
+         
+        ctx.opacity = this.opacity; 
 
         // set lineWidht 
         ctx.lineWidth = this.width;
