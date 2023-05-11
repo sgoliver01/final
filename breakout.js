@@ -1,5 +1,9 @@
+    
 export class Breakout {
+
+
     constructor(canvas, keyMap) {
+
 
         // save canvas and keyMap as members
         this.canvas = canvas;
@@ -42,7 +46,7 @@ export class Breakout {
         
         
         for (let r = 0; r<4; r++){
-            console.log("BREAK")
+          //  console.log("BREAK")
         for (let c = 0; c < 10; c++) {
             const newBrick = new Box()
             newBrick.minX = (c+1)*8 + (c*55)
@@ -56,7 +60,7 @@ export class Breakout {
             newBrick.yVel= 0
             newBrick.isBrick = true
             this.brickArray.push(newBrick)
-            console.log(newBrick.color)
+       //     console.log(newBrick.color)
         }
     }
         
@@ -107,6 +111,10 @@ export class Breakout {
         this.eyeRightInner.xVel = this.box.xVel/16
         this.eyeRightInner.yVel = this.box.yVel/20
         
+        
+        this.Xs = []
+        this.Ys = []
+        
               
     }
     
@@ -128,6 +136,8 @@ export class Breakout {
         
         this.update();
         this.draw();
+
+
         
     }
     
@@ -270,10 +280,11 @@ export class Breakout {
         rightEdge.width = 10;
         rightEdge.height = this.canvas.height;
         obstacles.push(rightEdge);
+
         
         
         
-        this.box.update(obstacles, this.eyeLeft, this.eyeRight, this.eyeLeftInner, this.eyeRightInner);
+        this.box.update(obstacles, this.eyeLeft, this.eyeRight, this.eyeLeftInner, this.eyeRightInner, this.Xs, this.Ys);
         
         
      
@@ -334,6 +345,7 @@ export class Breakout {
             this.ctx.fillText("You Lose!", this.canvas.width/2, this.canvas.height/2)            
         }
         
+        this.trail = new Trail(this.Xs.slice(-20)[0], this.Xs.slice(-1)[0], this.Ys.slice(-20)[0], this.Ys.slice(-1)[0])
         
         if (this.gameStarted){
         // Draw the box
@@ -343,6 +355,8 @@ export class Breakout {
         this.eyeLeftInner.draw(this.ctx)
         this.eyeRight.draw(this.ctx)
         this.eyeLeft.draw(this.ctx)
+        this.trail.draw(this.ctx)
+
        
         
         for (const brick of this.brickArray){
@@ -372,6 +386,7 @@ class Box {
         this.isPaddle = false
         this.isPowerup = false
         
+        
     }
 
     randomizeColor() {
@@ -395,7 +410,7 @@ class Box {
         return intervalsOverlap(yi1, yi2);
     }
 
-    update(obstacles, eyeLeft, eyeRight, eyeLeftInner, eyeRightInner) {
+    update(obstacles, eyeLeft, eyeRight, eyeLeftInner, eyeRightInner, Xs, Ys) {
         //in all circumstances check if the inner eye is on the outside of the outter eye... if (eyeLeftInner.x < eyeLeft) ... undo last step
         
         // move x and y
@@ -404,9 +419,7 @@ class Box {
         this.minX += this.xVel;
         eyeLeftInner.x += eyeLeftInner.xVel;
         eyeRightInner.x += eyeRightInner.xVel;
-//        console.log(eyeLeftInner.xVel, eyeRightInner.xVel)
-//        console.log(eyeLeftInner.yVel, eyeRightInner.yVel)
-        
+
         
         //bound eye on the left side
         
@@ -582,11 +595,31 @@ class Box {
                     }            
                 }
   
+                
             }   
           }
         }
-    }
 
+        if (Xs.length < 300) {
+            Xs.push(this.minX)
+        }
+        else {
+            Xs.shift()
+            Xs.push(this.minX)
+        }
+        
+        if (Ys.length < 300) {
+            Ys.push(this.minY)
+        }
+        else {
+            Ys.shift()
+            Ys.push(this.minY)
+        }
+
+        
+    }
+    
+   
     draw(ctx) {
         if (this.active){
         const [r,g,b] = this.color;
@@ -624,7 +657,55 @@ class Circle {
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle);
         ctx.strokeStyle = "blue";
-        ctx.stroke();
+       // ctx.stroke();
             
     }
+}
+
+
+ class Trail {
+     
+     constructor(x1, x2, y1, y2) {
+        this.x1 = x1
+        this.y1 = y1
+        this.x2 = x2
+        this.y2 = y2
+        this.stroke = "white"
+        this.width = 3
+         
+         
+         
+     }
+     draw(ctx) {
+         
+         //clip if the abs value is bigger so that the line stays the same length 
+//         if (abs(x1-x2)> 20) {
+//             
+//         }
+        
+          // start a new path
+         ctx.beginPath()
+
+        // place the cursor from the point the line should be started 
+         
+
+        ctx.moveTo(this.x2 +5 , this.y2+5);
+
+        // draw a line from current cursor position to the provided x,y coordinate
+        ctx.lineTo(this.x1, this.y1);
+
+
+        // set strokecolor
+        ctx.strokeStyle = this.stroke;
+
+        // set lineWidht 
+        ctx.lineWidth = this.width;
+         
+
+        // add stroke to the line 
+        ctx.stroke();
+      
+        
+    }
+
 }
