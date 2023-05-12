@@ -959,9 +959,9 @@ class Ball {
     draw(ctx) {
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle);
-        ctx.fillStyle = "blue"; // Set the fill color to blue
+        ctx.fillStyle = "red"; // Set the fill color to blue
         ctx.fill();
-        ctx.strokeStyle = "blue";
+        ctx.strokeStyle = "red";
         ctx.strokeStyle = 1;
         ctx.stroke();
         
