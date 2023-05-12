@@ -172,7 +172,7 @@ export class Breakout {
         this.eyeRightInner.x = 315;
         this.eyeRightInner.y = 441;
         this.eyeRightInner.radius = 4;
-        this.eyeRightInner.xVel = this.ball.xVel/16
+        this.eyeRightInner.xVel = this.ball.xVel/20
         this.eyeRightInner.yVel = this.ball.yVel/20
          
          
@@ -180,7 +180,7 @@ export class Breakout {
         this.eyeLeftInner.x = 290;
         this.eyeLeftInner.y = 441;
         this.eyeLeftInner.radius = 4;
-        this.eyeLeftInner.xVel = this.ball.xVel/16
+        this.eyeLeftInner.xVel = this.ball.xVel/20
         this.eyeLeftInner.yVel = this.ball.yVel/20
          
          
@@ -719,6 +719,7 @@ class Ball {
 
         // move x
         this.x += this.xVel;
+        console.log(this)
         eyeLeftInner.x += eyeLeftInner.xVel;
         eyeRightInner.x += eyeRightInner.xVel;
             
@@ -897,21 +898,22 @@ class Ball {
           }
              }
         }
+        
 
         if (Xs.length < 50) {
-            Xs.push(this.minX + this.width/2)
+            Xs.push(this.bBoxes[0].minX + this.bBoxes[0].width/2)
         }
         else {
             Xs.shift()
-            Xs.push(this.minX + this.width/2)
+            Xs.push(this.bBoxes[0].minX + this.bBoxes[0].width/2)
         }
         
         if (Ys.length < 50) {
-            Ys.push(this.minY + this.height/2)
+            Ys.push(this.bBoxes[0].minY + this.bBoxes[0].height/2)
         }
         else {
             Ys.shift()
-            Ys.push(this.minY + this.height/2)
+            Ys.push(this.bBoxes[0].minY + this.bBoxes[0].height/2)
         }
         
     }
