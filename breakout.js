@@ -17,7 +17,7 @@ export class Breakout {
         this.ctx = canvas.getContext('2d'); 
         
         
-        this.ballsArray = []
+       
 
         // Set up the box (bouncing around the screen)
         this.box = new Box();
@@ -29,7 +29,12 @@ export class Breakout {
         this.box.width = 20;
         this.box.height = 20;
         
-        this.ballsArray.push(this.box)
+        
+        
+        this.ball = new Ball()
+        
+        
+
         
 
         // Set up the player paddle (paddle on the left side)
@@ -53,8 +58,8 @@ export class Breakout {
             newBrick.minY = 30+ (40*r)
             newBrick.width = 55
             newBrick.height = 15
-//            newBrick.randomizeColor()
-            newBrick.color = [56,251,157]
+            newBrick.randomizeColor()
+//            newBrick.color = [56,251,157]
             
             newBrick.xVel= 0
             newBrick.yVel= 0
@@ -64,9 +69,9 @@ export class Breakout {
         }
     }
         
-        var randomIndex = Math.floor(Math.random() * this.brickArray.length);
-        this.brickArray[randomIndex].color = [232, 247, 26]
-        this.brickArray[randomIndex].isPowerup = true
+//        var randomIndex = Math.floor(Math.random() * this.brickArray.length);
+//        this.brickArray[randomIndex].color = [232, 247, 26]
+//        this.brickArray[randomIndex].isPowerup = true
         
 
 //        this.obstacles= this.obstacles.concat(this.brickArray)
@@ -362,6 +367,7 @@ export class Breakout {
         
         if (this.gameStarted){
         // Draw the box
+        this.ball.draw(this.ctx)
         this.box.draw(this.ctx);
         this.paddle.draw(this.ctx);
         this.eyeRightInner.draw(this.ctx)
@@ -385,6 +391,7 @@ export class Breakout {
 
 
 class Box {
+    
     constructor() {
         this.minX = 10;
         this.minY = 30;
@@ -396,7 +403,7 @@ class Box {
         this.active = true
         this.breakable = false
         this.isPaddle = false
-        this.isPowerup = false
+    
         
         
     }
@@ -568,9 +575,9 @@ class Box {
               const paddle_mid = o.minX +(o.width/2)
               const ball_pos = this.minX
               const distance_from_center = Math.abs(paddle_mid - ball_pos)/20
-              console.log("DFC: ", distance_from_center)
-              console.log ("xvel = : ", this.xVel)
-              
+//              console.log("DFC: ", distance_from_center)
+//              console.log ("xvel = : ", this.xVel)
+//              
                               
              
                     //right 
@@ -674,6 +681,125 @@ class Circle {
         ctx.stroke();
             
     }
+}
+
+
+
+
+class Ball {
+    
+    constructor() {
+        this.x = 200;
+        this.y = 300;
+        this.radius = 20;
+        this.sAngle = 0;
+        this.eAngle = 2* Math.PI;
+        this.xVel = 3;
+        this.yVel = 3;
+        this.bBoxes = []
+      
+        
+
+          
+      const numRows = 8; 
+          
+      const boxHeight = Math.ceil(this.radius * 2 / numRows) ; //10
+//        console.log("box height:", boxHeight)
+
+      for (let row = 0; row < numRows; row++) {
+          
+          
+        const boxY = this.y - this.radius + ((row) * boxHeight+2); 
+        console.log("y:", boxY)
+          
+          
+          
+        const boxX = this.x - this.radius
+       
+
+      
+//        const rowRadius = this.radius - Math.abs(this.y - this.radius - boxY);
+//        const boxWidth = Math.ceil(rowRadius * 2);
+
+       
+        const box = new Box()
+        
+        
+        if (boxY < this.y){
+             box.minX = this.x - (Math.sqrt(this.radius**2 - ((boxY-this.y)**2))) 
+
+        }
+        else {
+            
+             box.minX = this.x - (Math.sqrt(this.radius**2 - ((boxY-this.y)**2))) 
+        }
+        
+       
+   
+        console.log("x:", box.minX)
+        box.minY = boxY;
+        box.width = (Math.sqrt(this.radius**2 - ((boxY-this.y)**2)) * 2)
+        box.height = boxHeight
+//        box.minX = 100
+//        box.minY = 200
+//        box.width =  300
+//        box.height = 200;
+        box.xVel = 3
+        box.yVel = 3
+        box.randomizeColor()
+       
+      
+        
+        this.bBoxes.push(box);
+      }
+        console.log(this.bBoxes)
+//        this.bBoxes.pop()
+    
+
+    }
+    
+    randomizeColor() {
+        this.color[0] = Math.round(Math.random()*255);
+        this.color[1] = Math.round(Math.random()*255);
+        this.color[2] = Math.round(Math.random()*255);
+    }
+    
+    
+    increaseX(x){
+          for (let i = 0; i < 4; i++) {
+              this.bBoxes[i].xVel += x
+          
+        }
+    }
+        
+    increaseY(y) {
+          for (let i = 0; i < 4; i++) {
+              this.bBoxes[i].yVel += y
+          
+    
+          }
+    }
+    
+    
+    
+    
+    
+    
+    draw(ctx) {
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle);
+        ctx.strokeStyle = "blue";
+        ctx.strokeStyle = 1;
+        ctx.stroke();
+        
+        for (let i = 0; i < 8; i++) {
+        this.bBoxes[i].draw(ctx)
+        }
+        
+            
+    }
+    
+    
 }
 
 
