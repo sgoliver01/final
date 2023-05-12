@@ -16,25 +16,20 @@ export class Breakout {
         // save canvas context as member
         this.ctx = canvas.getContext('2d'); 
         
-        
-       
 
-        // Set up the box (bouncing around the screen)
-        this.box = new Box();
-        this.box.minX = 290
-        this.box.minY = 300
-        this.box.xVel = 3; // units: pixels per frame
-        this.box.yVel = 3;
-    
-        this.box.width = 20;
-        this.box.height = 20;
-        
+
+////       Set up the box (bouncing around the screen)
+//        this.box = new Box();
+//        this.box.minX = 290
+//        this.box.minY = 300
+//        this.box.xVel = 3; // units: pixels per frame
+//        this.box.yVel = 3;
+//        this.box.width = 20;
+//        this.box.height = 20;
+//        
         
         
         this.ball = new Ball()
-        
-        
-
         
 
         // Set up the player paddle (paddle on the left side)
@@ -58,9 +53,7 @@ export class Breakout {
             newBrick.minY = 30+ (40*r)
             newBrick.width = 55
             newBrick.height = 15
-            newBrick.randomizeColor()
-//            newBrick.color = [56,251,157]
-            
+            newBrick.randomizeColor()    
             newBrick.xVel= 0
             newBrick.yVel= 0
             newBrick.isBrick = true
@@ -69,12 +62,6 @@ export class Breakout {
         }
     }
         
-//        var randomIndex = Math.floor(Math.random() * this.brickArray.length);
-//        this.brickArray[randomIndex].color = [232, 247, 26]
-//        this.brickArray[randomIndex].isPowerup = true
-        
-
-//        this.obstacles= this.obstacles.concat(this.brickArray)
        
 //        
      
@@ -98,8 +85,8 @@ export class Breakout {
         this.eyeLeftInner.x = 290;
         this.eyeLeftInner.y = 441;
         this.eyeLeftInner.radius = 4;
-        this.eyeLeftInner.xVel = this.box.xVel/16
-        this.eyeLeftInner.yVel = this.box.yVel/20
+        this.eyeLeftInner.xVel = this.ball.xVel/16
+        this.eyeLeftInner.yVel = this.ball.yVel/20
 
         
         
@@ -113,8 +100,8 @@ export class Breakout {
         this.eyeRightInner.x = 315;
         this.eyeRightInner.y = 441;
         this.eyeRightInner.radius = 4;
-        this.eyeRightInner.xVel = this.box.xVel/16
-        this.eyeRightInner.yVel = this.box.yVel/20
+        this.eyeRightInner.xVel = this.ball.xVel/16
+        this.eyeRightInner.yVel = this.ball.yVel/20
         
         
         this.Xs = []
@@ -147,29 +134,54 @@ export class Breakout {
     }
     
      resetBall(){ 
-        this.box.minX = 290
-        this.box.minY = 300
-        this.box.xVel = 3; // units: pixels per frame
-        this.box.yVel = 3;
-    
-        this.box.width = 20;
-        this.box.height = 20;
          
+//        this.box.minX = 290
+//        this.box.minY = 300
+//        this.box.xVel = 3; // units: pixels per frame
+//        this.box.yVel = 3;
+//    
+//        this.box.width = 20;
+//        this.box.height = 20;
+//         
+         
+         
+        //reset Ball
+        this.ball.x = 200;
+        this.ball.y = 300;
+        this.ball.xVel = 3;
+        this.ball.yVel = 3;
+         
+        const boxHeight = Math.ceil(this.ball.radius * 2 / this.ball.numRows); //10
+        for (let row = 0; row < this.ball.numRows; row++) {          
+        const boxY = this.ball.y - this.ball.radius + ((row) * boxHeight+2);    
+        const boxX = this.ball.x - this.ball.radius
+        this.ball.bBoxes[row].minX = this.ball.x - (Math.sqrt(this.ball.radius**2 - ((boxY-this.ball.y)**2))) 
+        this.ball.bBoxes[row].minY = boxY;
+        this.ball.bBoxes[row].width = (Math.sqrt(this.ball.radius**2 - ((boxY-this.ball.y)**2)) * 2)
+        this.ball.bBoxes[row].height = boxHeight
+        
+//        console.log(this.ball)
+//        
+         
+        }
+             
+             
+             
          
          //reset right eye
         this.eyeRightInner.x = 315;
         this.eyeRightInner.y = 441;
         this.eyeRightInner.radius = 4;
-        this.eyeRightInner.xVel = this.box.xVel/16
-        this.eyeRightInner.yVel = this.box.yVel/20
+        this.eyeRightInner.xVel = this.ball.xVel/16
+        this.eyeRightInner.yVel = this.ball.yVel/20
          
          
          //reset left eye
         this.eyeLeftInner.x = 290;
         this.eyeLeftInner.y = 441;
         this.eyeLeftInner.radius = 4;
-        this.eyeLeftInner.xVel = this.box.xVel/16
-        this.eyeLeftInner.yVel = this.box.yVel/20
+        this.eyeLeftInner.xVel = this.ball.xVel/16
+        this.eyeLeftInner.yVel = this.ball.yVel/20
          
          
          this.Xs = []
@@ -179,8 +191,9 @@ export class Breakout {
     update() {
         // Update the obstacle using keyboard info
         
-           // Check for losing
-        if (this.box.minY + this.box.height > this.canvas.height) {
+  
+        // Check for losing
+        if (this.ball.y + this.ball.radius > this.canvas.height) {
             
            
             // Ball too low -> I lost
@@ -191,6 +204,7 @@ export class Breakout {
             return
             } 
             
+         
             this.resetBall()
 
         }
@@ -289,20 +303,13 @@ export class Breakout {
         rightEdge.width = 10;
         rightEdge.height = this.canvas.height;
         obstacles.push(rightEdge);
-
-        
-        
-        
-        this.box.update(obstacles, this.eyeLeft, this.eyeRight, this.eyeLeftInner, this.eyeRightInner, this.Xs, this.Ys);
-        
-        
-     
-        
+    
+//        this.box.update(obstacles, this.eyeLeft, this.eyeRight, this.eyeLeftInner, this.eyeRightInner, this.Xs, this.Ys); 
+        this.ball.update(obstacles, this.eyeLeft, this.eyeRight, this.eyeLeftInner, this.eyeRightInner, this.Xs, this.Ys); 
         
     }
     
-    
-   
+
     draw() {
         
         // clear background
@@ -366,9 +373,8 @@ export class Breakout {
             
         
         if (this.gameStarted){
-        // Draw the box
         this.ball.draw(this.ctx)
-        this.box.draw(this.ctx);
+//        this.box.draw(this.ctx);
         this.paddle.draw(this.ctx);
         this.eyeRightInner.draw(this.ctx)
         this.eyeLeftInner.draw(this.ctx)
@@ -379,7 +385,7 @@ export class Breakout {
         
         for (const brick of this.brickArray){
             brick.draw(this.ctx)
-        }
+           }
         
         }
 
@@ -575,21 +581,9 @@ class Box {
               const paddle_mid = o.minX +(o.width/2)
               const ball_pos = this.minX
               const distance_from_center = Math.abs(paddle_mid - ball_pos)/20
-//              console.log("DFC: ", distance_from_center)
-//              console.log ("xvel = : ", this.xVel)
-//              
-                              
-             
+       
                     //right 
                     if (ball_pos > paddle_mid){
-                       
-                        
-                        
-//                        let scaleFactor = (1+(Math.abs((dist- (o.width/2)) / (o.width/2)) /50))
-                       
-                        
-                       let scaleFactor = 1 + (distance_from_center/50)
-                        
                         
                         this.xVel = 5*distance_from_center 
                         eyeLeftInner.xVel = 5*distance_from_center/200
@@ -597,24 +591,16 @@ class Box {
                     
                     }
                     
+                    //left  
                     else {
-                        
-                        //left    
-//                        let dist = this.minX - o.minX
-//                        let scaleFactor = (1+(Math.abs((dist- (o.width/2) / (o.width/2)) /50)))
-                    
-                        let scaleFactor = 1 + (distance_from_center/50)
-                        
+ 
                         this.xVel = -5*distance_from_center
-                        
                         eyeLeftInner.xVel = -5*distance_from_center/200
                         eyeRightInner.xVel = -5*distance_from_center/200
                       
                         
                     }            
-                }
-  
-                
+                }  
             }   
           }
         }
@@ -634,8 +620,7 @@ class Box {
             Ys.shift()
             Ys.push(this.minY + this.height/2)
         }
-
-        
+  
     }
     
    
@@ -691,72 +676,247 @@ class Ball {
     constructor() {
         this.x = 200;
         this.y = 300;
-        this.radius = 20;
+        this.radius = 15;
         this.sAngle = 0;
         this.eAngle = 2* Math.PI;
         this.xVel = 3;
         this.yVel = 3;
         this.bBoxes = []
-      
-        
-
+        this.numRows = 15
+               
           
-      const numRows = 8; 
-          
-      const boxHeight = Math.ceil(this.radius * 2 / numRows) ; //10
+        const boxHeight = Math.ceil(this.radius * 2 / this.numRows) ; //10
 //        console.log("box height:", boxHeight)
 
-      for (let row = 0; row < numRows; row++) {
-          
-          
-        const boxY = this.y - this.radius + ((row) * boxHeight+2); 
-        console.log("y:", boxY)
-          
-          
-          
-        const boxX = this.x - this.radius
-       
+        for (let row = 0; row < this.numRows; row++) {
+               
+            const boxY = this.y - this.radius + ((row) * boxHeight+1); 
+//            console.log("y:", boxY)     
+            const boxX = this.x - this.radius
 
-      
-//        const rowRadius = this.radius - Math.abs(this.y - this.radius - boxY);
-//        const boxWidth = Math.ceil(rowRadius * 2);
+            const box = new Box()
+            box.minX = this.x - (Math.sqrt(this.radius**2 - ((boxY-this.y)**2))) 
+//            console.log("x:", box.minX)
+            box.minY = boxY;
+            box.width = (Math.sqrt(this.radius**2 - ((boxY-this.y)**2)) * 2)
+            box.height = boxHeight
+            box.xVel = 0
+            box.yVel = 0
+            box.randomizeColor()
 
-       
-        const box = new Box()
-        
-        
-        if (boxY < this.y){
-             box.minX = this.x - (Math.sqrt(this.radius**2 - ((boxY-this.y)**2))) 
-
-        }
-        else {
-            
-             box.minX = this.x - (Math.sqrt(this.radius**2 - ((boxY-this.y)**2))) 
-        }
-        
-       
-   
-        console.log("x:", box.minX)
-        box.minY = boxY;
-        box.width = (Math.sqrt(this.radius**2 - ((boxY-this.y)**2)) * 2)
-        box.height = boxHeight
-//        box.minX = 100
-//        box.minY = 200
-//        box.width =  300
-//        box.height = 200;
-        box.xVel = 3
-        box.yVel = 3
-        box.randomizeColor()
-       
-      
-        
-        this.bBoxes.push(box);
+            this.bBoxes.push(box);
       }
         console.log(this.bBoxes)
-//        this.bBoxes.pop()
-    
 
     }
+    
+    
+ 
+    update(obstacles, eyeLeft, eyeRight, eyeLeftInner, eyeRightInner, Xs, Ys)  {
+        //in all circumstances check if the inner eye is on the outside of the outter eye... if (eyeLeftInner.x < eyeLeft) ... undo last step
+        
+        // move x and y
+
+        // move x
+        this.x += this.xVel;
+        eyeLeftInner.x += eyeLeftInner.xVel;
+        eyeRightInner.x += eyeRightInner.xVel;
+            
+        this.increaseX(this.xVel)
+
+        
+//        bound eye on the left side
+        
+        if (eyeLeftInner.x < eyeLeft.x - 2) {
+            eyeLeftInner.x = eyeLeft.x -2
+        }
+        
+        if (eyeRightInner.x < eyeRight.x -2 ) {
+            eyeRightInner.x = eyeRight.x -2
+        }
+        
+        //bound eye on the right
+        
+         if (eyeLeftInner.x > eyeLeft.x + 2) {
+            eyeLeftInner.x = eyeLeft.x + 2
+        }
+        
+        if (eyeRightInner.x > eyeRight.x + 2) {
+            eyeRightInner.x = eyeRight.x + 2
+        }
+        
+        
+
+        for (const o of obstacles) {
+            
+            if (o.active){
+                
+            for (let i=0; i<this.bBoxes.length; i++){
+            
+            if (this.bBoxes[i].intersects(o)) {
+                // undo the step that caused the collision
+               this.increaseX(-this.xVel)
+                this.x -= this.xVel
+                eyeLeftInner.x -= eyeLeftInner.xVel;
+                eyeRightInner.x -= eyeRightInner.xVel;
+                
+                // reverse xVel to bounce
+                this.setXvelocity(-this.xVel)
+                this.xVel *=-1
+                eyeLeftInner.xVel *= -1;
+                eyeRightInner.xVel *= -1;
+
+                              
+                 if (o.isBrick){
+                    o.active = false
+                    o.color = [0,0,0]
+                    //o.draw(this.ctx)
+                }
+                
+        
+                if (o.isPaddle){
+                       
+                    const paddle_mid = o.minX +(o.width/2)
+                    const ball_pos = this.x
+                    const distance_from_center = Math.abs(paddle_mid - ball_pos)/20
+
+
+                    //ball hits right 
+                    if (ball_pos > paddle_mid){
+                        
+                        this.xVel = 5*distance_from_center
+                        this.setXvelocity(5*distance_from_center)
+//                        eyeLeftInner.xVel = 5*distance_from_center/200
+//                        eyeRightInner.xVel = 5*distance_from_center/200
+//                     
+                    }
+                    
+                    //ball hits left  
+                    else {       
+                        this.xVel = -5*distance_from_center 
+                        setXvelocity(-5*distance_from_center)
+//                        eyeLeftInner.xVel = -5*distance_from_center/200
+//                        eyeRightInner.xVel = -5*distance_from_center/200
+                  
+                        
+                    }            
+                }
+
+            }
+            }
+        }
+
+        }
+            
+        // move y
+        this.y += this.yVel;
+        this.increaseY(this.yVel)
+        
+        eyeLeftInner.y += eyeLeftInner.yVel;
+        eyeRightInner.y += eyeRightInner.yVel;
+        
+        if (eyeLeftInner.y > eyeLeft.y) {
+            eyeLeftInner.y = eyeLeft.y
+        }
+        
+        if (eyeRightInner.y > eyeRight.y) {
+            eyeRightInner.y = eyeRight.y
+        }
+        
+        
+                
+        if (eyeLeftInner.y < eyeLeft.y - 2) {
+
+            eyeLeftInner.y = eyeLeft.y - 2
+        }
+        
+        if (eyeRightInner.y < eyeRight.y -2) {
+            eyeRightInner.y = eyeRight.y - 2
+        }
+        
+
+        for (const o of obstacles) {
+            
+            
+             if (o.active){
+                 
+                for (let i=0; i<this.bBoxes.length; i++){
+                     
+                     
+            if (this.bBoxes[i].intersects(o)) {
+                // undo the step that caused the collision
+                
+               this.increaseY(-this.yVel)
+                this.y -= this.yVel
+//                eyeLeftInner.y -= eyeLeftInner.yVel
+//                eyeRightInner.y -= eyeRightInner.yVel
+//                
+                
+                // reverse yVel to bounce
+                this.yVel *= -1;
+                this.setYvelocity(-this.yVel)              
+                eyeLeftInner.yVel *= -1
+                eyeRightInner.yVel *= -1;
+                
+                
+                   if (o.isBrick){
+                    o.active = false
+                    o.color = [0,0,0]
+                    //o.draw(this.ctx)
+                }
+                
+          if (o.isPaddle) {
+              
+              const paddle_mid = o.minX +(o.width/2)
+              const ball_pos = this.x
+              const distance_from_center = Math.abs(paddle_mid - ball_pos)/20
+           
+                    //right 
+                    if (ball_pos > paddle_mid){
+           
+                        this.xVel = 5*distance_from_center
+                        this.setXvelocity(5*distance_from_center)
+                        eyeLeftInner.xVel = 5*distance_from_center/200
+                        eyeRightInner.xVel = 5*distance_from_center/200
+                    
+                    }
+                    
+                    //left 
+                    else {
+                        
+                        this.xVel = -5*distance_from_center 
+                        this.setXvelocity(-5*distance_from_center)
+                        eyeLeftInner.xVel = -5*distance_from_center/200
+                        eyeRightInner.xVel = -5*distance_from_center/200
+                      
+                        
+                    }            
+                }
+  
+            }   
+          }
+             }
+        }
+
+        if (Xs.length < 50) {
+            Xs.push(this.minX + this.width/2)
+        }
+        else {
+            Xs.shift()
+            Xs.push(this.minX + this.width/2)
+        }
+        
+        if (Ys.length < 50) {
+            Ys.push(this.minY + this.height/2)
+        }
+        else {
+            Ys.shift()
+            Ys.push(this.minY + this.height/2)
+        }
+        
+    }
+    
+    
     
     randomizeColor() {
         this.color[0] = Math.round(Math.random()*255);
@@ -766,40 +926,48 @@ class Ball {
     
     
     increaseX(x){
-          for (let i = 0; i < 4; i++) {
-              this.bBoxes[i].xVel += x
+          for (let i = 0; i < this.numRows; i++) {
+              this.bBoxes[i].minX += x
           
         }
     }
         
     increaseY(y) {
-          for (let i = 0; i < 4; i++) {
-              this.bBoxes[i].yVel += y
+          for (let i = 0; i < this.numRows; i++) {
+              this.bBoxes[i].minY += y
           
-    
           }
     }
     
+    setXvelocity(x){
+          for (let i = 0; i < this.numRows; i++) {
+              this.bBoxes[i].xVel = x
+          
+        }
+    }
     
+    setYvelocity(y) {
+          for (let i = 0; i < this.numRows; i++) {
+              this.bBoxes[i].yVel = y
+          
+          }
+    }
     
-    
-    
-    
+ 
     draw(ctx) {
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle);
+        ctx.fillStyle = "blue"; // Set the fill color to blue
+        ctx.fill();
         ctx.strokeStyle = "blue";
         ctx.strokeStyle = 1;
         ctx.stroke();
         
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < this.numRows; i++) {
         this.bBoxes[i].draw(ctx)
-        }
-        
-            
+        }          
     }
-    
-    
+
 }
 
 
