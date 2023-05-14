@@ -676,13 +676,13 @@ class Ball {
     constructor() {
         this.x = 200;
         this.y = 300;
-        this.radius = 15;
+        this.radius = 14;
         this.sAngle = 0;
         this.eAngle = 2* Math.PI;
         this.xVel = 3;
         this.yVel = 3;
         this.bBoxes = []
-        this.numRows = 15
+        this.numRows = 14
                
           
         const boxHeight = Math.ceil(this.radius * 2 / this.numRows) ; //10
@@ -719,7 +719,7 @@ class Ball {
 
         // move x
         this.x += this.xVel;
-        console.log(this)
+//        console.log(this)
         eyeLeftInner.x += eyeLeftInner.xVel;
         eyeRightInner.x += eyeRightInner.xVel;
             
@@ -797,16 +797,12 @@ class Ball {
                         this.xVel = -5*distance_from_center 
                         setXvelocity(-5*distance_from_center)
 //                        eyeLeftInner.xVel = -5*distance_from_center/200
-//                        eyeRightInner.xVel = -5*distance_from_center/200
-                  
-                        
+//                        eyeRightInner.xVel = -5*distance_from_center/200       
                     }            
                 }
-
             }
             }
         }
-
         }
             
         // move y
@@ -823,9 +819,7 @@ class Ball {
         if (eyeRightInner.y > eyeRight.y) {
             eyeRightInner.y = eyeRight.y
         }
-        
-        
-                
+           
         if (eyeLeftInner.y < eyeLeft.y - 2) {
 
             eyeLeftInner.y = eyeLeft.y - 2
@@ -965,9 +959,9 @@ class Ball {
         ctx.strokeStyle = 1;
         ctx.stroke();
         
-        for (let i = 0; i < this.numRows; i++) {
-        this.bBoxes[i].draw(ctx)
-        }          
+//        for (let i = 0; i < this.numRows; i++) {
+//        this.bBoxes[i].draw(ctx)
+//        }          
     }
 
 }
