@@ -146,7 +146,7 @@ export class Breakout {
          
          
         //reset Ball
-        this.ball.x = 200;
+        this.ball.x = 300;
         this.ball.y = 300;
         this.ball.xVel = 3;
         this.ball.yVel = 3;
@@ -674,7 +674,7 @@ class Circle {
 class Ball {
     
     constructor() {
-        this.x = 200;
+        this.x = 300;
         this.y = 300;
         this.radius = 14;
         this.sAngle = 0;
@@ -706,7 +706,6 @@ class Ball {
 
             this.bBoxes.push(box);
       }
-        console.log(this.bBoxes)
 
     }
     
@@ -787,17 +786,17 @@ class Ball {
                         
                         this.xVel = 5*distance_from_center
                         this.setXvelocity(5*distance_from_center)
-//                        eyeLeftInner.xVel = 5*distance_from_center/200
-//                        eyeRightInner.xVel = 5*distance_from_center/200
+                        eyeLeftInner.xVel = 5*distance_from_center/200
+                        eyeRightInner.xVel = 5*distance_from_center/200
 //                     
                     }
                     
                     //ball hits left  
                     else {       
                         this.xVel = -5*distance_from_center 
-                        setXvelocity(-5*distance_from_center)
-//                        eyeLeftInner.xVel = -5*distance_from_center/200
-//                        eyeRightInner.xVel = -5*distance_from_center/200       
+                        this.setXvelocity(-5*distance_from_center)
+                        eyeLeftInner.xVel = -5*distance_from_center/200
+                        eyeRightInner.xVel = -5*distance_from_center/200       
                     }            
                 }
             }
@@ -895,19 +894,19 @@ class Ball {
         
 
         if (Xs.length < 50) {
-            Xs.push(this.bBoxes[0].minX + this.bBoxes[0].width/2)
+            Xs.push(this.bBoxes[4].minX + this.bBoxes[4].width/2)
         }
         else {
             Xs.shift()
-            Xs.push(this.bBoxes[0].minX + this.bBoxes[0].width/2)
+            Xs.push(this.bBoxes[4].minX + this.bBoxes[4].width/2)
         }
         
         if (Ys.length < 50) {
-            Ys.push(this.bBoxes[0].minY + this.bBoxes[0].height/2)
+            Ys.push(this.bBoxes[4].minY + this.bBoxes[4].height/2)
         }
         else {
             Ys.shift()
-            Ys.push(this.bBoxes[0].minY + this.bBoxes[0].height/2)
+            Ys.push(this.bBoxes[4].minY + this.bBoxes[4].height/2)
         }
         
     }
@@ -976,7 +975,7 @@ class Ball {
         this.y2 = y2
         this.stroke = "red"
         this.opacity = .5
-        this.width = 3
+        this.width = 7
           
          
      }
